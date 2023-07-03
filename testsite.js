@@ -41,6 +41,9 @@ const intervalMillis = 1000 * intervalSeconds;
 const maxKP = 2;
 const maxKI = 1;
 const maxKD = 0.1;
+const maxBias = 5;
+
+const impulseStrength = 10;
 
 let addId = 0;
 
@@ -95,14 +98,16 @@ function getKd() {
     return kDSlider.value * maxKD / 100;
 }
 
-
+function applyImpulse() {
+    err += impulseStrength;
+}
 
 function systemUpdate() {
     err += vel;
     vel += -intervalSeconds * computeCorrectiveSignal();
 
     if (biasCheck.checked) {
-        vel += biasSlider.value / 100 * intervalSeconds;
+        vel += biasSlider.value * maxBias / 100 * intervalSeconds;
     }
     
 }
