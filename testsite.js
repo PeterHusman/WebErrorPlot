@@ -35,7 +35,7 @@ const cfg = {
 
 let cht = new Chart(ctx, cfg);
 
-const intervalSeconds = 0.016;
+let intervalSeconds = 0.016;
 const intervalMillis = 1000 * intervalSeconds;
 
 const maxKP = 2;
@@ -55,10 +55,16 @@ let accErr = 0;
 
 let vel = 0;
 
+let dateTime = Date.now();
+
 myReset();
 
 
     function addOne() {
+        let newTime = Date.now();
+        intervalSeconds = (newTime - dateTime) / 1000;
+        dateTime = newTime;
+
         cht.data.datasets[0].data.push({x: t, y: err});
         systemUpdate();
         t += intervalSeconds;
@@ -85,6 +91,7 @@ myReset();
     }
 
     function start() {
+        dateTime = Date.now();
         addId = setInterval(addOne, intervalMillis);
     }
 
