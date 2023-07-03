@@ -7,6 +7,8 @@
     <button onclick="myReset()">Reset</button>
     <button onclick="start()">Start</button>
     <button onclick="stop()">Stop</button>
+    <input type="checkbox" id="inst-check" name="instantsim" autocomplete="false" onchange="instToggle()">
+    <label for="instantsim">Simulate instantly</label>
   </div>
   <div>
     kP: <input type="range" min="0" max="100" value="0" class="slider" id="kP-slide" autocomplete="off">
