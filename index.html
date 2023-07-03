@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<div>
+    <div class="chart-container" style="position: relative; height:60vh; width:90vw">
+      <canvas id="myChart"></canvas>
+  </div>
+  
+    <button onclick="myReset()">Reset</button>
+    <button onclick="start()">Start</button>
+    <button onclick="stop()">Stop</button>
+  </div>
+  <div>
+    kP: <input type="range" min="0" max="100" value="0" class="slider" id="kP-slide" autocomplete="off">
+    <input type="checkbox" id="kP-check" checked="true" autocomplete="off">
+  </div>
+  <div>
+    kI: <input type="range" min="0" max="100" value="0" class="slider" id="kI-slide" autocomplete="off">
+    <input type="checkbox" id="kI-check" checked="false" autocomplete="off">
+  </div>
+  <div>
+    kD: <input type="range" min="0" max="100" value="0" class="slider" id="kD-slide" autocomplete="off">
+    <input type="checkbox" id="kD-check" checked="false" autocomplete="off">
+  </div>
+  <div></div>
+  <div>
+    Bias: <input type="range" min="-100" max="100" value="0" class="slider" id="bias-slide" autocomplete="off"> <input type="checkbox" id="bias-check" autocomplete="off">
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <script src="testsite.js"></script>
+  

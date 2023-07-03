@@ -1,7 +1,16 @@
 const ctx = document.getElementById('myChart');
-  
+const kPSlider = document.getElementById('kP-slide');
+const kPCheck = document.getElementById('kP-check');
+const kISlider = document.getElementById('kI-slide');
+const kICheck = document.getElementById('kI-check');
+const kDSlider = document.getElementById('kD-slide');
+const kDCheck = document.getElementById('kD-check');
 
-    const cfg = {
+const biasSlider = document.getElementById('bias-slide');
+const biasCheck = document.getElementById('bias-check');
+
+
+const cfg = {
   type: 'line',
   data: {
     datasets: [{
@@ -10,39 +19,113 @@ const ctx = document.getElementById('myChart');
   },
   options: {
     scales: {
-        xAxis: {
-            type: 'linear'
+        x: {
+            type: 'linear',
+                suggestedMin: 0,
+                suggestedMax: 25
+        },
+        y: {
+                suggestedMin: -20,
+                suggestedMax: 20
         }
     }
   }
 };
 
 
-    let cht = new Chart(ctx, cfg);
+let cht = new Chart(ctx, cfg);
 
-    let addId = setInterval(addOne, 100);
+const intervalSeconds = 0.016;
+const intervalMillis = 1000 * intervalSeconds;
 
-    let i = 1;
+const maxKP = 2;
+const maxKI = 1;
+const maxKD = 0.1;
 
-    let err = -15;
+let addId = 0;
 
-    const millis = 100;
-    const seconds = millis / 1000;
+let t = 0;
+
+let err = -15;
+let oldErr = err;
+let accErr = 0;
+
+let vel = 0;
+
+myReset();
+
 
     function addOne() {
-        cht.data.datasets[0].data.push({x: i, y: i});
-        i++;
-        cht.update();
+        cht.data.datasets[0].data.push({x: t, y: err});
+        systemUpdate();
+        t += intervalSeconds;
+        cht.update('none');
 
-        if (i >= 100) {
-            clearInterval(addId);
+        if (t >= 100) {
+            stop();
         }
     }
 
-    function myReset() {
-        i = 0;
+    function stop() {
         clearInterval(addId);
+    }
+
+    function myReset() {
+        stop();
+        t = 0;
+        err = -15;
+        oldErr = err;
+        accErr = 0;
         cht.data.datasets[0].data = [];
         cht.update();
-        addId = setInterval(addOne, 100);
+        systemReset();
     }
+
+    function start() {
+        addId = setInterval(addOne, intervalMillis);
+    }
+
+function getKp() {
+    return kPSlider.value * maxKP / 100;
+}
+function getKi() {
+    return kISlider.value * maxKI / 100;
+}
+function getKd() {
+    return kDSlider.value * maxKD / 100;
+}
+
+
+
+function systemUpdate() {
+    err += vel;
+    vel += -intervalSeconds * computeCorrectiveSignal();
+
+    if (biasCheck.checked) {
+        vel += biasSlider.value / 100 * intervalSeconds;
+    }
+    
+}
+
+function systemReset() {
+    vel = 0;
+}
+
+
+function computeCorrectiveSignal() {
+    let der = (err - oldErr) / intervalSeconds;
+    oldErr = err;
+    
+    let signal = 0;
+    if (kPCheck.checked) {
+        signal += err * getKp();
+    }
+    if (kICheck.checked) {
+        accErr += err * intervalSeconds * getKi();
+        signal += accErr;
+    }
+    if (kDCheck.checked) {
+        signal += der * getKd();
+    }
+    return signal;
+}
